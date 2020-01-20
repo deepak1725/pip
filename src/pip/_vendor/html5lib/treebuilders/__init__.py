@@ -84,5 +84,5 @@ def getTreeBuilder(treeType, implementation=None, **kwargs):
             # NEVER cache here, caching is done in the etree submodule
             return etree.getETreeModule(implementation, **kwargs).TreeBuilder
         else:
-            raise ValueError("""Unrecognised treebuilder "%s" """ % treeType)
+            raise ValueError("""Unrecognised treebuilder "{}" """.format(treeType))
     return treeBuilderCache.get(treeType)

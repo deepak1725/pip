@@ -191,7 +191,7 @@ def get_supported_platform():
     m = macosVersionString.match(plat)
     if m is not None and sys.platform == "darwin":
         try:
-            plat = 'macosx-%s-%s' % ('.'.join(_macosx_vers()[:2]), m.group(3))
+            plat = 'macosx-{}-{}'.format('.'.join(_macosx_vers()[:2]), m.group(3))
         except ValueError:
             # not Mac OS X
             pass
@@ -397,7 +397,7 @@ def get_build_platform():
         try:
             version = _macosx_vers()
             machine = os.uname()[4].replace(" ", "_")
-            return "macosx-%d.%d-%s" % (
+            return "macosx-{}.{}-{}".format(
                 int(version[0]), int(version[1]),
                 _macosx_arch(machine),
             )
@@ -438,7 +438,7 @@ def compatible_platforms(provided, required):
             provDarwin = darwinVersionString.match(provided)
             if provDarwin:
                 dversion = int(provDarwin.group(1))
-                macosversion = "%s.%s" % (reqMac.group(1), reqMac.group(2))
+                macosversion = "{}.{}".format(reqMac.group(1), reqMac.group(2))
                 if dversion == 7 and macosversion >= "10.3" or \
                         dversion == 8 and macosversion >= "10.4":
                     return True
@@ -1091,7 +1091,7 @@ class Environment:
                 for dist in other[project]:
                     self.add(dist)
         else:
-            raise TypeError("Can't add %r to environment" % (other,))
+            raise TypeError("Can't add {} to environment".format(other,))
         return self
 
     def __add__(self, other):
@@ -1234,11 +1234,11 @@ class ResourceManager:
         mode = os.stat(path).st_mode
         if mode & stat.S_IWOTH or mode & stat.S_IWGRP:
             msg = (
-                "%s is writable by group/others and vulnerable to attack "
+                "{} is writable by group/others and vulnerable to attack "
                 "when "
                 "used with get_resource_filename. Consider a more secure "
                 "location (set with .set_extraction_path or the "
-                "PYTHON_EGG_CACHE environment variable)." % path
+                "PYTHON_EGG_CACHE environment variable).".format(path)
             )
             warnings.warn(msg, UserWarning)
 
@@ -1713,7 +1713,7 @@ class ZipProvider(EggProvider):
         if fspath.startswith(self.zip_pre):
             return fspath[len(self.zip_pre):]
         raise AssertionError(
-            "%s is not a subpath of %s" % (fspath, self.zip_pre)
+            "{} is not a subpath of {}".format(fspath, self.zip_pre)
         )
 
     def _parts(self, zip_path):
@@ -1723,7 +1723,7 @@ class ZipProvider(EggProvider):
         if fspath.startswith(self.egg_root + os.sep):
             return fspath[len(self.egg_root) + 1:].split(os.sep)
         raise AssertionError(
-            "%s is not a subpath of %s" % (fspath, self.egg_root)
+            "{} is not a subpath of {}".format(fspath, self.egg_root)
         )
 
     @property
@@ -2417,15 +2417,15 @@ class EntryPoint:
         self.dist = dist
 
     def __str__(self):
-        s = "%s = %s" % (self.name, self.module_name)
+        s = "{} = {}".format(self.name, self.module_name)
         if self.attrs:
             s += ':' + '.'.join(self.attrs)
         if self.extras:
-            s += ' [%s]' % ','.join(self.extras)
+            s += ' [{}]'.format(','.join(self.extras))
         return s
 
     def __repr__(self):
-        return "EntryPoint.parse(%r)" % str(self)
+        return "EntryPoint.parse({})".format(str(self))
 
     def load(self, require=True, *args, **kwargs):
         """
@@ -2741,7 +2741,7 @@ class Distribution:
                 deps.extend(dm[safe_extra(ext)])
             except KeyError:
                 raise UnknownExtra(
-                    "%s has no such extra feature %r" % (self, ext)
+                    "{} has no such extra feature {}".format(self, ext)
                 )
         return deps
 
@@ -2786,7 +2786,7 @@ class Distribution:
 
     def egg_name(self):
         """Return what this distribution's standard .egg filename should be"""
-        filename = "%s-%s-py%s" % (
+        filename = "{}-{}-py{}".format(
             to_filename(self.project_name), to_filename(self.version),
             self.py_version or PY_MAJOR
         )
@@ -2797,7 +2797,7 @@ class Distribution:
 
     def __repr__(self):
         if self.location:
-            return "%s (%s)" % (self, self.location)
+            return "{} ({})".format(self, self.location)
         else:
             return str(self)
 
@@ -2807,7 +2807,7 @@ class Distribution:
         except ValueError:
             version = None
         version = version or "[unknown version]"
-        return "%s %s" % (self.project_name, version)
+        return "{} {}".format(self.project_name, version)
 
     def __getattr__(self, attr):
         """Delegate all unrecognized public attributes to .metadata provider"""
@@ -2838,9 +2838,9 @@ class Distribution:
     def as_requirement(self):
         """Return a ``Requirement`` that matches this distribution exactly"""
         if isinstance(self.parsed_version, packaging.version.Version):
-            spec = "%s==%s" % (self.project_name, self.parsed_version)
+            spec = "{}=={}".format(self.project_name, self.parsed_version)
         else:
-            spec = "%s===%s" % (self.project_name, self.parsed_version)
+            spec = "{}==={}".format(self.project_name, self.parsed_version)
 
         return Requirement.parse(spec)
 
@@ -2848,7 +2848,7 @@ class Distribution:
         """Return the `name` entry point of `group` or raise ImportError"""
         ep = self.get_entry_info(group, name)
         if ep is None:
-            raise ImportError("Entry point %r not found" % ((group, name),))
+            raise ImportError("Entry point {} not found".format((group, name),))
         return ep.load()
 
     def get_entry_map(self, group=None):
@@ -2953,8 +2953,8 @@ class Distribution:
                        fn.startswith(self.location)):
                 continue
             issue_warning(
-                "Module %s was already imported from %s, but %s is being added"
-                " to sys.path" % (modname, fn, self.location),
+                "Module {} was already imported from {}, but {} is being added"
+                " to sys.path".format(modname, fn, self.location),
             )
 
     def has_version(self):
@@ -3140,7 +3140,7 @@ class Requirement(packaging.requirements.Requirement):
         return self.__hash
 
     def __repr__(self):
-        return "Requirement.parse(%r)" % str(self)
+        return "Requirement.parse({})".format(str(self))
 
     @staticmethod
     def parse(s):

@@ -30,12 +30,13 @@ def test_requirements_file(script):
         'install', '-r', script.scratch_path / 'initools-req.txt'
     )
     assert (
-        script.site_packages / 'INITools-0.2-py%s.egg-info' %
-        pyversion in result.files_created
+        script.site_packages / 'INITools-0.2-py{}.egg-info'.format(
+            pyversion in result.files_created)
     )
     assert script.site_packages / 'initools' in result.files_created
     assert result.files_created[script.site_packages / other_lib_name].dir
-    fn = '%s-%s-py%s.egg-info' % (other_lib_name, other_lib_version, pyversion)
+    fn = '{0}-{1}-py{2}.egg-info'.format(
+        other_lib_name, other_lib_version, pyversion)
     assert result.files_created[script.site_packages / fn].dir
 
 

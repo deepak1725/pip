@@ -96,10 +96,10 @@ def pprint(walker):
                     ns = constants.prefixes[token["namespace"]]
                 else:
                     ns = token["namespace"]
-                name = "%s %s" % (ns, token["name"])
+                name = "{} {}".format(ns, token["name"])
             else:
                 name = token["name"]
-            output.append("%s<%s>" % (" " * indent, name))
+            output.append("{}<{}>".format(" " * indent, name))
             indent += 2
             # attributes (sorted for consistent ordering)
             attrs = token["data"]
@@ -109,10 +109,10 @@ def pprint(walker):
                         ns = constants.prefixes[namespace]
                     else:
                         ns = namespace
-                    name = "%s %s" % (ns, localname)
+                    name = "{} {}".format(ns, localname)
                 else:
                     name = localname
-                output.append("%s%s=\"%s\"" % (" " * indent, name, value))
+                output.append("{}{}=\"{}\"" .format(" " * indent, name, value))
             # self-closing
             if type == "EmptyTag":
                 indent -= 2
@@ -121,34 +121,34 @@ def pprint(walker):
             indent -= 2
 
         elif type == "Comment":
-            output.append("%s<!-- %s -->" % (" " * indent, token["data"]))
+            output.append("{}<!-- {} -->".format(" " * indent, token["data"]))
 
         elif type == "Doctype":
             if token["name"]:
                 if token["publicId"]:
-                    output.append("""%s<!DOCTYPE %s "%s" "%s">""" %
-                                  (" " * indent,
-                                   token["name"],
-                                   token["publicId"],
-                                   token["systemId"] if token["systemId"] else ""))
+                    output.append("""{}<!DOCTYPE {} "{}" "{}">""".format(
+                        " " * indent,
+                        token["name"],
+                        token["publicId"],
+                        token["systemId"] if token["systemId"] else ""))
                 elif token["systemId"]:
-                    output.append("""%s<!DOCTYPE %s "" "%s">""" %
-                                  (" " * indent,
-                                   token["name"],
-                                   token["systemId"]))
+                    output.append("""{}<!DOCTYPE {} "" "{}">""".format(
+                        " " * indent,
+                        token["name"],
+                        token["systemId"]))
                 else:
-                    output.append("%s<!DOCTYPE %s>" % (" " * indent,
+                    output.append("{}<!DOCTYPE {}>".format(" " * indent,
                                                        token["name"]))
             else:
-                output.append("%s<!DOCTYPE >" % (" " * indent,))
+                output.append("{}<!DOCTYPE >".format(" " * indent,))
 
         elif type == "Characters":
-            output.append("%s\"%s\"" % (" " * indent, token["data"]))
+            output.append("{}\"{}\"".format(" " * indent, token["data"]))
 
         elif type == "SpaceCharacters":
             assert False, "concatenateCharacterTokens should have got rid of all Space tokens"
 
         else:
-            raise ValueError("Unknown token type, %s" % type)
+            raise ValueError("Unknown token type, {}".format(type))
 
     return "\n".join(output)

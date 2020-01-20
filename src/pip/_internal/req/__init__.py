@@ -49,8 +49,8 @@ def install_given_reqs(
 
     if to_install:
         logger.info(
-            'Installing collected packages: %s',
-            ', '.join([req.name for req in to_install]),
+            'Installing collected packages: {}'.format(
+                ', '.join([req.name for req in to_install])),
         )
 
     installed = []
@@ -58,7 +58,8 @@ def install_given_reqs(
     with indent_log():
         for requirement in to_install:
             if requirement.should_reinstall:
-                logger.info('Attempting uninstall: %s', requirement.name)
+                logger.info('Attempting uninstall: {}'.format(
+                    requirement.name))
                 with indent_log():
                     uninstalled_pathset = requirement.uninstall(
                         auto_confirm=True
